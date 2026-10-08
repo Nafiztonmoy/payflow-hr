@@ -1,0 +1,36 @@
+## .NET & Visual Studio
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+.idea/
+*.DotSettings.user
+
+## Node & Web
+node_modules/
+dist/
+dist-ssr/
+*.local
+.npm
+.eslintcache
+.stylelintcache
+
+## Test & Coverage
+TestResults/
+*.trx
+coverage/
+*.cobertura.xml
+
+## Environment & Secrets
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+*.log
+
+## OS Files
+.DS_Store
+Thumbs.db

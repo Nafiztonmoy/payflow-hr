@@ -1,0 +1,64 @@
+name: PayFlow CI / CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  backend-test:
+    name: Backend Build & Automated Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore NuGet Packages
+        run: dotnet restore PayFlow.sln
+
+      - name: Build Backend Solution
+        run: dotnet build PayFlow.sln -c Release --no-restore
+
+      - name: Execute Domain & Engine Unit Tests
+        run: dotnet test tests/PayFlow.UnitTests/PayFlow.UnitTests.csproj -c Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
+
+      - name: Execute RBAC & Lifecycle Integration Tests
+        run: dotnet test tests/PayFlow.IntegrationTests/PayFlow.IntegrationTests.csproj -c Release --no-build --verbosity normal
+
+  frontend-build:
+    name: Frontend Build, Lint & DOM Checks
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: src/payflow-web
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+          cache-dependency-path: src/payflow-web/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build & TypeScript Typecheck
+        run: npm run build
+
+      - name: Lint Frontend
+        run: npm run lint
+
+      - name: Verify React Workflows With API Fixtures
+        run: npm run test:dom

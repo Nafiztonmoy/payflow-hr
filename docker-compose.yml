@@ -1,0 +1,53 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: payflow-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: payflow_db
+      POSTGRES_USER: payflow_admin
+      POSTGRES_PASSWORD: PayFlowSecure2026!
+    ports:
+      - "5434:5432"
+    volumes:
+      - payflow_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U payflow_admin -d payflow_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    image: payflow-api:latest
+    container_name: payflow-api
+    build:
+      context: .
+      dockerfile: src/PayFlow.Api/Dockerfile
+    restart: always
+    ports:
+      - "5005:5005"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=payflow_db;Username=payflow_admin;Password=PayFlowSecure2026!;
+      ASPNETCORE_URLS: http://+:5005
+      Jwt__SecretKey: SuperSecretPayFlowKeyForJwtAuth2026!MustBeAtLeast32BytesLong
+      Jwt__Issuer: PayFlow
+      Jwt__Audience: PayFlowApp
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    image: payflow-web:latest
+    container_name: payflow-web
+    build:
+      context: ./src/payflow-web
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
+volumes:
+  payflow_postgres_data:
