@@ -74,7 +74,14 @@ builder.Services.AddScoped<IPayrollRunService, PayrollRunService>();
 builder.Services.AddScoped<DataSeeder>();
 
 // Configure JWT Authentication
-var jwtSecret = builder.Configuration["Jwt:Secret"] ?? "EnterprisePayrollSuperSecretKeyPayFlow2026!SecureKeyMinimum256Bits";
+var jwtSecret = builder.Configuration["Jwt:Secret"];
+
+if (string.IsNullOrWhiteSpace(jwtSecret) ||
+    Encoding.UTF8.GetByteCount(jwtSecret) < 32)
+{
+    throw new InvalidOperationException(
+        "Configure a secure Jwt:Secret of at least 32 bytes.");
+}
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "PayFlowHR";
 var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "PayFlowApp";
 
