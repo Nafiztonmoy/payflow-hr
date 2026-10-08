@@ -1,189 +1,532 @@
-# PayFlow HR — Auditable Enterprise Payroll & Human Capital Platform
 
-**Redesigned frontend:** Start with [START_HERE.md](START_HERE.md). Current validation and limitations are in [docs/FRONTEND_REDESIGN.md](docs/FRONTEND_REDESIGN.md). Backend test claims elsewhere in this inherited README were not reverified in this redesign.
+# PayFlow HR — Enterprise Payroll & Human Resource Management Platform
 
-[![.NET 10](https://img.shields.io/badge/.NET-10.0%20LTS-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
-[![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript)](https://www.typescriptlang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql)](https://www.postgresql.org/)
-[![Tailwind CSS v4](https://img.shields.io/badge/Tailwind-v4.0-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
-[![Tests](https://img.shields.io/badge/Frontend-Build%20%26%20DOM%20verified-success)](#testing--verification)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+**A full-stack, auditable HR and Payroll Management Platform built with ASP.NET Core 10, React 19, TypeScript, and PostgreSQL.**
 
-**PayFlow HR** is an enterprise-grade, auditable Human Resources & Payroll Platform built on modern cloud-native standards. Engineered for defense-in-depth security and mathematical certainty, PayFlow HR features a pure deterministic payroll calculation engine, a 6-stage lifecycle state machine, tamper-evident SHA-256 calculation snapshots, and server-enforced role-based access control (RBAC).
-
-The platform comes pre-configured with the sample enterprise **Northstar Technologies Inc.** (25 realistic employees, 5 departments, 1 historical paid payroll run, and 1 active run featuring a fixable blocking exception).
+[![.NET](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-4169E1?logo=postgresql)](https://www.postgresql.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 ---
 
-## 🏛️ System Architecture
+## 🌐 Live Demo
 
-PayFlow HR follows **Clean Architecture** and Domain-Driven Design principles:
+**🚀 [Launch PayFlow HR](https://payflow-i963lyvhu-nafiztonmoys-projects.vercel.app)**
 
+| Component | Platform | Link |
+|-----------|----------|------|
+| Frontend | Vercel | [Live Application](https://payflow-i963lyvhu-nafiztonmoys-projects.vercel.app) |
+| Backend API | Render | [API Server](https://payflow-hr.onrender.com) |
+| Database | Neon PostgreSQL | [Neon](https://neon.tech) |
+| Repository | GitHub | [Source Code](https://github.com/Nafiztonmoy/payflow-hr) |
+
+> **Note:** The live application is a portfolio demonstration using fictional employee and payroll data. It is not intended for actual payroll processing.
+
+---
+
+## 📌 Project Overview
+
+**PayFlow HR** is a modern enterprise-inspired Human Resource Management and Payroll platform designed to streamline organizational operations.
+
+The application combines a responsive React frontend, a RESTful ASP.NET Core backend, and PostgreSQL for structured data management.
+
+It demonstrates:
+
+- Clean Architecture
+- Role-Based Access Control (RBAC)
+- Secure authentication workflows
+- Deterministic payroll calculations
+- Employee lifecycle management
+- Payroll approval processes
+- Attendance and leave management
+- Audit trails and reporting
+- Full-stack cloud deployment
+
+The platform includes a fictional organization called **Northstar Technologies**, with sample employees, departments, compensation structures, and payroll records.
+
+---
+
+## ✨ Key Features
+
+### 👥 Employee Management
+
+- Create and manage employee profiles
+- Organize employees into departments
+- Assign job designations and managers
+- Track employment status
+- Manage employee compensation records
+
+### 🔐 Authentication & Authorization
+
+- JWT authentication
+- HttpOnly authentication cookies
+- Password hashing
+- Role-based authorization
+- Backend-enforced resource permissions
+
+Supported roles:
+
+| Role | Responsibilities |
+|------|------------------|
+| Admin | System administration, configuration, and auditing |
+| HR | Employee management, departments, and leave approvals |
+| Manager | Team management and team-related approvals |
+| Accountant | Payroll calculation, review, and processing |
+| Employee | Personal attendance, leave, and payslip access |
+
+### 💰 Payroll Management
+
+- Salary structure configuration
+- Base salary and allowances
+- Overtime calculation
+- Unpaid leave deductions
+- Progressive demo tax calculations
+- Gross and net salary calculations
+- Payroll review and approval
+- Payslip generation
+- Payroll exceptions and resolution
+
+### 📅 Attendance & Leave
+
+- Employee attendance tracking
+- Leave request submission
+- Leave balance management
+- Manager and HR approval workflows
+- Leave-related payroll adjustments
+
+### 📊 Dashboard & Reporting
+
+- Administrative dashboard
+- Employee and payroll statistics
+- Payroll reports
+- Data visualizations
+- Audit activity
+- Payroll calculation summaries
+
+---
+
+## 🏗️ System Architecture
+
+PayFlow HR follows **Clean Architecture**, separating the application into independent layers.
+
+```text
+                  React Frontend
+                 (Vercel Hosting)
+                        |
+                        | HTTPS REST API
+                        v
+                 ASP.NET Core API
+                  (Render Hosting)
+                        |
+                        v
+                Application Layer
+              Services / Use Cases
+                        |
+                        v
+                   Domain Layer
+             Entities / Business Logic
+                        |
+                        v
+               Infrastructure Layer
+                  EF Core / Npgsql
+                        |
+                        v
+               PostgreSQL Database
+                    (Neon)
 ```
-+---------------------------------------------------------------------------------------------------------+
-|                                        PAYFLOW HR ARCHITECTURE                                          |
-|                                                                                                         |
-|  [ Frontend Client ]     React 19 + TypeScript + Tailwind v4 + TanStack Query + Recharts                |
-|           |                                                                                             |
-|           v (REST / JSON / RFC 7807)                                                                    |
-|  [ Presentation ]        PayFlow.Api (.NET 10 Web API, JWT + HttpOnly Cookies, CorrelationId)           |
-|           |                                                                                             |
-|           v (DTOs / Contracts)                                                                          |
-|  [ Application  ]        PayFlow.Application (Pure Deterministic Engine, Tax Rules, Exception Rules)    |
-|           |                                                                                             |
-|           v (Entities / Enums / Aggregates)                                                             |
-|  [ Domain       ]        PayFlow.Domain (PayrollRun Aggregate, Compensation Contracts, AuditLog)        |
-|           ^                                                                                             |
-|           | (Data Access Implementations)                                                               |
-|  [ Infrastructure ]      PayFlow.Infrastructure (EF Core 10, Npgsql, PBKDF2 Hasher, Data Seeder)        |
-|           |                                                                                             |
-|           v                                                                                             |
-|  [ Database     ]        PostgreSQL 16 (Port 5434, numeric(18, 4) financial arithmetic)                  |
-+---------------------------------------------------------------------------------------------------------+
+
+### Backend Layers
+
+**PayFlow.Api**
+- REST API controllers
+- Authentication configuration
+- Middleware
+- Dependency injection
+
+**PayFlow.Application**
+- Payroll services
+- Business use cases
+- Application interfaces
+- Calculation rules
+
+**PayFlow.Domain**
+- Domain entities
+- Enums
+- Business models
+- Payroll lifecycle rules
+
+**PayFlow.Infrastructure**
+- Entity Framework Core
+- Database context
+- PostgreSQL integration
+- Database migrations
+- Data seeding
+- Authentication services
+
+---
+
+## 🛠️ Technology Stack
+
+| Category | Technology |
+|----------|------------|
+| Frontend | React 19 |
+| Language | TypeScript |
+| Build Tool | Vite |
+| Styling | Tailwind CSS v4 |
+| Data Fetching | TanStack Query |
+| Charts | Recharts |
+| Backend | ASP.NET Core 10 |
+| Backend Language | C# |
+| Database | PostgreSQL |
+| ORM | Entity Framework Core 10 |
+| Database Driver | Npgsql |
+| Authentication | JWT |
+| Authorization | RBAC |
+| Password Security | PBKDF2 |
+| Containerization | Docker |
+| Frontend Hosting | Vercel |
+| Backend Hosting | Render |
+| Database Hosting | Neon |
+
+---
+
+## 🔄 Payroll Workflow
+
+Payroll processing follows a controlled lifecycle:
+
+```text
+Draft
+  |
+  v
+Calculating
+  |
+  v
+Calculated
+  |
+  v
+In Review
+  |
+  v
+Approved
+  |
+  v
+Paid
+```
+
+Each payroll run passes through validation and approval stages.
+
+### Payroll Rules
+
+- Uses decimal arithmetic for financial calculations
+- Supports employee-specific compensation
+- Calculates earnings and deductions
+- Accounts for unpaid leave and overtime
+- Uses configurable demonstration tax rules
+- Checks blocking exceptions before approval
+- Produces calculation snapshots and audit records
+
+---
+
+## 📁 Project Structure
+
+```text
+payflow-hr/
+|
+|-- src/
+|   |
+|   |-- PayFlow.Api/
+|   |   |-- Controllers/
+|   |   |-- Infrastructure/
+|   |   |-- Program.cs
+|   |
+|   |-- PayFlow.Application/
+|   |   |-- Payroll/
+|   |   |-- Common/
+|   |
+|   |-- PayFlow.Domain/
+|   |   |-- Entities/
+|   |   |-- Enums/
+|   |   |-- Models/
+|   |
+|   |-- PayFlow.Infrastructure/
+|   |   |-- Data/
+|   |   |-- Migrations/
+|   |   |-- Services/
+|   |
+|   |-- payflow-web/
+|       |-- src/
+|       |-- package.json
+|
+|-- docs/
+|-- tests/
+|-- docker-compose.yml
+|-- README.md
 ```
 
 ---
 
-## ⭐ Distinctive Core Values
-
-1. **Pure Deterministic Calculation Engine**:
-   - Zero floating-point drift: 100% fixed-point financial arithmetic (`decimal` in C#, `numeric(18, 4)` in PostgreSQL).
-   - Commercial rounding: `MidpointRounding.AwayFromZero` across all intermediate components.
-   - Exact formulas for base proration, unpaid leave (loss of pay), 1.5x overtime multiplier, progressive tax withholding (`DEMO-PROGRESSIVE-2026`), and employer Cost to Company (CTC).
-2. **State Machine Lifecycle & Zero-Blocking Rule**:
-   - Workflow: `Draft` $\rightarrow$ `Calculating` $\rightarrow$ `Calculated` $\rightarrow$ `InReview` $\rightarrow$ `Approved` $\rightarrow$ `Paid`.
-   - **Guarded Gate**: Approval strictly requires **zero unresolved blocking exceptions**. The active March 2026 run includes a blocking exception (`MISSING_BANK_ACCOUNT` for James Liu) that must be resolved with an auditable note before approval can proceed.
-3. **Tamper-Evident SHA-256 Calculation Snapshots**:
-   - Every calculated run computes a SHA-256 cryptographic digest across the normalized set of line items and totals.
-   - Any manual database tampering breaks the hash, providing verifiable audit proof.
-4. **Strict 5-Role Server-Side RBAC & Resource Isolation**:
-   - 5 roles: `Admin`, `HR`, `Manager`, `Accountant`, `Employee`.
-   - Employees and managers can **only view their own payslips**. Requesting another employee's payslip is denied with **HTTP 403 Forbidden**.
-5. **Historical Compensation Immutability**:
-   - Dated compensation contracts (`EffectiveFrom` / `EffectiveTo`) preserve historical pay rates; previous cycles are never altered when salaries change.
-6. **Immutable Security Audit Trail**:
-   - Append-only `AuditLog` captures actor, role, action, timestamp, correlation ID, and before/after JSON diffs.
-
----
-
-## 👥 Demo Personas & Credentials
-
-The application includes a **1-Click Persona Switcher** in the top navigation bar for immediate evaluator demonstration:
-
-| Persona Role | Name | Email / Username | Password | Key Responsibilities |
-| :--- | :--- | :--- | :--- | :--- |
-| **Admin** | System Administrator | `admin@northstar.local` | `Admin@PayFlow2026!` | Global configuration, security audit logs, overrides. |
-| **HR** | Rachel Green | `hr@northstar.local` | `Hr@PayFlow2026!` | Employee directory, compensation contracts, departments, leave approvals. |
-| **Manager** | David Miller | `manager@northstar.local` | `Manager@PayFlow2026!` | Engineering team view, team leave approvals. Prohibited from other salaries. |
-| **Accountant** | Angela Martin | `accountant@northstar.local` | `Accountant@PayFlow2026!` | Payroll workspace, calculation engine, exception resolution, disbursements. |
-| **Employee** | Alex Carter | `employee@northstar.local` | `Employee@PayFlow2026!` | Self-service portal: view personal attendance, submit leaves, view own payslips. |
-
----
-
-## 🚀 Quick Start Guide
+## 🚀 Getting Started
 
 ### Prerequisites
-- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
-- [Node.js 24.15+](https://nodejs.org/) & `npm`
-- [Docker & Docker Compose](https://www.docker.com/) (optional, for containerized run)
 
-### Option A: Local Development (Recommended)
+Before running the project, install:
 
-1. **Start PostgreSQL Database**:
-   ```bash
-   docker compose up -d db
-   ```
-   *Note: Database is mapped to host port `5434` to prevent collisions with any existing PostgreSQL instances.*
+- .NET 10 SDK
+- Node.js and npm
+- PostgreSQL or Docker Desktop
+- Git
 
-2. **Launch ASP.NET Core API**:
-   ```bash
-   dotnet run --project src/PayFlow.Api
-   ```
-   *The API boots on `http://localhost:5005`, automatically runs schema migrations, and seeds the full Northstar Technologies dataset on startup.*
-   - Swagger / OpenAPI Docs: [http://localhost:5005/swagger](http://localhost:5005/swagger)
-   - Health Check: [http://localhost:5005/api/v1/health](http://localhost:5005/api/v1/health)
+### 1. Clone the Repository
 
-3. **Launch React SPA**:
-   ```bash
-   cd src/payflow-web
-   npm ci
-   npm run dev
-   ```
-   *Open [http://localhost:5173](http://localhost:5173) in your browser.*
+```bash
+git clone https://github.com/Nafiztonmoy/payflow-hr.git
+
+cd payflow-hr
+```
+
+### 2. Start PostgreSQL
+
+Using Docker Compose:
+
+```bash
+docker compose up -d db
+```
+
+The local development database uses port `5434`.
+
+### 3. Configure Environment Variables
+
+Configure the backend database connection and JWT authentication settings.
+
+Required environment variable names:
+
+```env
+ConnectionStrings__DefaultConnection=
+Jwt__Secret=
+Jwt__Issuer=PayFlowHR
+Jwt__Audience=PayFlowApp
+Cors__AllowedOrigins__0=http://localhost:5173
+```
+
+Do not commit real database passwords or JWT secrets.
+
+### 4. Apply Database Migrations
+
+```bash
+dotnet ef database update --project src/PayFlow.Infrastructure --startup-project src/PayFlow.Api --context PayFlowDbContext
+```
+
+Verify the target database before running the migration.
+
+### 5. Run Backend API
+
+```bash
+dotnet run --project src/PayFlow.Api
+```
+
+Development API URL:
+
+```text
+http://localhost:5005
+```
+
+Swagger documentation:
+
+```text
+http://localhost:5005/swagger
+```
+
+### 6. Run Frontend
+
+Open another terminal:
+
+```bash
+cd src/payflow-web
+
+npm ci
+
+npm run dev
+```
+
+Frontend URL:
+
+```text
+http://localhost:5173
+```
 
 ---
 
-### Option B: Docker Compose Deployment
+## 🐳 Docker Setup
 
-Run the entire ecosystem (PostgreSQL, Backend API, and Nginx React SPA) with a single command:
+Run the full application using Docker Compose:
 
 ```bash
 docker compose up -d --build
 ```
 
-- **Frontend Web UI**: [http://localhost:5173](http://localhost:5173)
-- **Backend Web API**: [http://localhost:5005](http://localhost:5005)
-- **Database**: `localhost:5434`
+Stop the containers:
+
+```bash
+docker compose down
+```
+
+Use development-only credentials for the local environment.
 
 ---
 
-## 🧪 Testing & Verification
+## ☁️ Cloud Deployment
 
-PayFlow HR includes 30 automated tests covering unit mathematical accuracy and end-to-end integration flows:
+The application is deployed using a modern three-tier cloud architecture.
+
+### Frontend — Vercel
+
+- Framework: React + Vite
+- Root Directory: `src/payflow-web`
+- Build Command: `npm run build`
+- Output Directory: `dist`
+
+### Backend — Render
+
+- Framework: ASP.NET Core 10
+- Deployment: Docker-based web service
+- Environment: Production
+- Database: External PostgreSQL hosted on Neon
+
+### Database — Neon PostgreSQL
+
+- Managed PostgreSQL
+- Entity Framework Core migrations
+- Relational data storage
+- Secure connection through environment variables
+
+### Deployment Flow
+
+```text
+GitHub Repository
+       |
+       +------------------+
+       |                  |
+       v                  v
+     Vercel             Render
+   React App        ASP.NET Core API
+                          |
+                          v
+                    Neon PostgreSQL
+```
+
+---
+
+## 🧪 Testing
+
+The repository contains backend unit and integration tests.
+
+### Run Backend Tests
 
 ```bash
-# Run all 30 automated backend tests
 dotnet test PayFlow.slnx
 ```
 
-### Test Suite Summary:
-- **`PayFlow.UnitTests` (18 Tests - 100% Pass)**:
-  - Baseline monthly salary calculation
-  - Mid-month join proration factor
-  - Unpaid leave daily deduction rate
-  - 1.5x overtime multiplier
-  - Tiered progressive tax brackets (`DEMO-PROGRESSIVE-2026`)
-  - Commercial midpoint rounding precision (`AwayFromZero`)
-  - Exception detection engine
-  - Deterministic SHA-256 calculation hashing
-- **`PayFlow.IntegrationTests` (12 Tests - 100% Pass)**:
-  - Authentication for all 5 persona accounts
-  - Invalid credential rejection (401)
-  - RBAC payroll run access restrictions (403)
-  - Manager payroll approval prohibition (403)
-  - Employee payslip isolation (verifies 403 when requesting other employee's payslip)
-  - Employee own payslip access (200)
-  - **Full Payroll Lifecycle**: Recalculate $\rightarrow$ Zero-blocking gate rejects approval (400) $\rightarrow$ Resolve blocking exception $\rightarrow$ Submit for review $\rightarrow$ Approve $\rightarrow$ Mark as Paid $\rightarrow$ Immutability check $\rightarrow$ CSV Export
-  - Audit trail event persistence
+### Build Frontend
 
 ```bash
-# Build & verify frontend TypeScript types
 cd src/payflow-web
+
+npm ci
+
 npm run build
 ```
 
----
-
-## 📚 Technical Documentation Index
-
-Detailed specifications and architectural guides are available in the [`docs/`](file:///d:/Enterprise%20Payroll%20&%20HR%20Platform/docs) directory:
-
-- [**docs/ARCHITECTURE.md**](file:///d:/Enterprise%20Payroll%20&%20HR%20Platform/docs/ARCHITECTURE.md) — System layers, request lifecycle, dependency diagrams, and concurrency control.
-- [**docs/DATA_MODEL.md**](file:///d:/Enterprise%20Payroll%20&%20HR%20Platform/docs/DATA_MODEL.md) — 3NF Entity-Relationship model, schema reference, and historical contract versioning.
-- [**docs/PAYROLL_ENGINE.md**](file:///d:/Enterprise%20Payroll%20&%20HR%20Platform/docs/PAYROLL_ENGINE.md) — Mathematical formulas, state machine, exception engine, and SHA-256 snapshots.
-- [**docs/SECURITY.md**](file:///d:/Enterprise%20Payroll%20&%20HR%20Platform/docs/SECURITY.md) — Threat model, PBKDF2 hashing, dual-token delivery, RBAC boundaries, and OWASP protections.
-- [**docs/API.md**](file:///d:/Enterprise%20Payroll%20&%20HR%20Platform/docs/API.md) — Complete RESTful endpoint reference with request/response schemas.
-- [**docs/PORTFOLIO.md**](file:///d:/Enterprise%20Payroll%20&%20HR%20Platform/docs/PORTFOLIO.md) — Engineering showcase, architectural decision records (ADRs), and verification scorecards.
+Test results should be verified against the latest code before reporting coverage or pass rates.
 
 ---
 
-## ⚖️ Statutory Disclaimer
+## 🔒 Security Considerations
 
-The progressive tax calculation ruleset (`DEMO-PROGRESSIVE-2026`) utilized in PayFlow HR is a configurable demonstration model designed to showcase tiered marginal withholding calculations. It does **not** constitute authoritative legal or statutory tax advice for Bangladesh, the United States, or any other jurisdiction.
+The application demonstrates multiple security practices:
+
+- JWT-based authentication
+- Password hashing with PBKDF2
+- Role-based authorization
+- Resource-level access restrictions
+- Audit logging
+- Environment-based configuration
+- Structured exception handling
+
+### Production Security Checklist
+
+Before using the application in a production environment:
+
+1. Remove hardcoded secrets and passwords.
+2. Rotate all previously exposed credentials.
+3. Disable or rotate publicly known demo accounts.
+4. Enforce HTTPS and secure authentication cookies.
+5. Restrict CORS to trusted frontend origins.
+6. Disable unnecessary production development tools.
+7. Review and apply database migrations safely.
+8. Enable database backups and operational monitoring.
+
+> **Important:** Removing demonstration passwords from this README does not invalidate existing accounts or erase previously published Git history. Credential rotation is still required.
+
+---
+
+## 📸 Screenshots
+
+Screenshots can be added to the repository to showcase the following interfaces:
+
+- Login Page
+- Executive Dashboard
+- Employee Directory
+- Payroll Management
+- Leave Management
+- Reporting Dashboard
+
+All screenshots should use fictional or sanitized data.
+
+---
+
+## 📚 Documentation
+
+Additional project documentation:
+
+- [System Architecture](docs/ARCHITECTURE.md)
+- [Database Model](docs/DATA_MODEL.md)
+- [Payroll Engine](docs/PAYROLL_ENGINE.md)
+- [Security](docs/SECURITY.md)
+- [API Documentation](docs/API.md)
+- [Portfolio Documentation](docs/PORTFOLIO.md)
+- [Frontend Redesign](docs/FRONTEND_REDESIGN.md)
+
+---
+
+## ⚠️ Limitations
+
+- Payroll tax rules are illustrative and not official statutory calculations.
+- The public deployment is designed for demonstration purposes.
+- Real employee and financial data should not be entered into the public demo.
+- Production readiness requires additional security validation and operational controls.
+
+---
+
+## 👨‍💻 Author
+
+**Nafiz Tonmoy**
+
+- GitHub: [@Nafiztonmoy](https://github.com/Nafiztonmoy)
+- Repository: [PayFlow HR](https://github.com/Nafiztonmoy/payflow-hr)
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+This project is licensed under the MIT License.
+
+See [LICENSE](LICENSE) for details.
+
+---
+
+⭐ **If you find this project useful, consider starring the repository!**
+
+**Built with ASP.NET Core, React, TypeScript, PostgreSQL, and modern cloud deployment technologies.**
